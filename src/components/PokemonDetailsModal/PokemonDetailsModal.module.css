@@ -1,0 +1,50 @@
+.cardContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.card{
+    width: 300px;
+    height: auto;
+    position: relative;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    padding: 20px;
+    transition: all .3s ease-in;
+}
+
+.card .cardImage{
+    height: 150px;
+    width: auto;
+    background-position: center center;
+    background-size: cover;    
+}
+.card .cardTitle{
+    padding: 20px 10px;
+    color: rgb(9, 9, 9);
+   
+}
+h3{
+    text-align: center;
+}
+
+.card .cardText{
+    color: #022a3c;
+}
+
+.icons{
+    width: 10%;
+    height: 10%;
+}
+
+.iconsWightHeight{
+    width: 20%;
+    height: 30%;
+}

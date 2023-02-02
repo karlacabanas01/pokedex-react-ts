@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pokemon } from '../models/pokemon.m';
+import { Pokemon } from '../models/pokemon';
 
 export async function getPokemons(): Promise<Pokemon[]>{
     //Llamado de api rest
@@ -18,6 +18,8 @@ export async function getPokemons(): Promise<Pokemon[]>{
     sp_atk: pokemon.sp_atk,
     sp_def: pokemon.sp_def,
     speed: pokemon.speed,
+    weight: pokemon.weight,
+    height: pokemon.height,
     type: pokemon.type[0]
  }));
 

@@ -11,5 +11,10 @@ export type Pokemon = {
     sp_atk: string;
     sp_def: string;
     speed: string;
+    weight: string;
+    height: string;
     type: Array<any>;
+
 }
+/*dos tipos de export named export(con destructuración con el nombre que definido) , 
+default export(importa directo con cualquier nombre) */

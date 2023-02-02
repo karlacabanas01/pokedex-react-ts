@@ -1,33 +1,35 @@
-import React, { useEffect, useState } from 'react';
-
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Card from 'react-bootstrap/Card';
-import { Button } from 'react-bootstrap';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Figure from 'react-bootstrap/Figure';
-//Hacer con css
-import {getPokemons} from '../controller/getpokemon';
-import {Pokemon} from '../models/pokemon.m';
-
+import React, { useEffect, useState } from "react";
+import { getPokemons } from "../controller/getpokemon";
+import { Pokemon } from "../models/pokemon";
+import { PokemonDetailsModal } from "../components/PokemonDetailsModal/PokemonDetailsModal";
+import styles from './Listado.module.css';
 
 const Listado = () => {
-    const [pokemons, setPokemons] = useState<Pokemon[]>([]);
-    const [query, setQuery] = useState("");
-    useEffect(() => {
-        const getData = async () => { //Todo async va con un await
-            const allPokemons = await getPokemons();
-            setPokemons(allPokemons);
-        }
-        getData();
+  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
+  const [query, setQuery] = useState("");
+  const [filteredPokemon, setFilteredPokemon] = useState<Pokemon[]>([]);
+
+  const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const getData = async () => {
+      //Todo async va con un await
+      const allPokemons = await getPokemons();
+      setPokemons([...allPokemons]);
+    };
+    getData();
+  }, []);
+
+  useEffect(() => {
+    const filteredPokemon = pokemons?.slice(0, 151).filter((pokemon) => {
+      //vive solo dentro de las llaves
+      return pokemon.name.toLowerCase().match(query.toLowerCase());
     });
+    setFilteredPokemon(filteredPokemon);
+  }, [query, pokemons]);
 
-    const FilterPokemon = pokemons?.slice(0, 151).filter((pokemon) => {
-        return pokemon.name.toLowerCase().match(query.toLowerCase());
-
-    });
-
-
-/*
+  /*
     Slice devuelve una copia de un array a un nuevo array comenzando por el inicio hasta el fin
     y con esto el array original  no se modificará.
     Map es el mapeo de los atributos.
@@ -35,72 +37,70 @@ const Listado = () => {
 */
   return (
     <>
-        <h1>Pokemon Ander Code</h1>
+      <header className={styles.header}>
+        <div className={styles.containerHeader}>
+        <h1>
+          <img
+            src="https://crisgon.github.io/pokedex/src/images/logo.png"
+            alt="Logo Pokedex"
+            className={styles.logo}
+          />
+        </h1>
 
-        <header>
-            <input value={query} placeholder="Buscar pokemon" type="text"
-            onChange={(event) => setQuery(event.target.value.trim())}  />
-        </header>
-        <br />
-        <div className='content-wrapper'>
-            <div className="content">
-                <div className="row gap-3">
-                {FilterPokemon?.slice(0, 151).map((pokemon)=>(
+        <nav>
+          <input
+            value={query}
+            placeholder="Buscar pokemon"
+            type="text"
+            onChange={(event) => setQuery(event.target.value.trim())}
+          />
+      </nav>
 
-                    <Card className='mx-auto' style={{ width: '18rem' }}>
-                    <Card.Header><b>Tipo: </b> {pokemon.type}</Card.Header>
-                        <Card.Img width='80' height='100' variant="top" src={pokemon.imggif} className='d-block mx-auto w-50'/>
-                        <Card.Body>
-                            <Card.Title className='text-center' > {pokemon.id} - {pokemon.name}</Card.Title>
-                            <ListGroup variant="flush">
-                                <ListGroup.Item> 
-                                    <Figure.Image width={16} height={16} alt="171x180"
-                                        src="https://cdn-icons-png.flaticon.com/512/833/833472.png"/>
-                                    <b> HP: </b>{pokemon.hp}                            
-                                </ListGroup.Item>
+      </div>
+     
 
-                                <ListGroup.Item> 
-                                    <Figure.Image width={16} height={16} alt="171x180"
-                                        src="https://cdn-icons-png.flaticon.com/512/1007/1007003.png" />
-                                    <b> Ataque: </b> {pokemon.attack}
-                                </ListGroup.Item>
+      </header>
+      {/*Boton*/}
 
-                                <ListGroup.Item> 
-                                    <Figure.Image width={16} height={16} alt="171x180"
-                                        src="https://cdn-icons-png.flaticon.com/512/5185/5185689.png"/>
-                                    <b> Defensa: </b> {pokemon.defense}
-                                </ListGroup.Item>
+      {/*Fin Boton*/}
+      <br />
+      <div className={styles.contenedorCard}>
+        <div className={styles.contenedorPokemones}>
+          {filteredPokemon?.slice(0, 151).map((pokemon) => (
+            <div key={pokemon.id} className={styles.card}>
+              <div className={styles.textos}>
+                <p>N° {pokemon.id}</p>
+                <h3>{pokemon.name}</h3>
+                <img alt="" className={styles.imgPokemon} src={pokemon.imggif} />
 
-                                <ListGroup.Item> 
-                                    <Figure.Image width={16} height={16} alt="171x180"
-                                        src="https://cdn-icons-png.flaticon.com/512/7674/7674388.png"/>
-                                    <b> E. Ataque: </b>  {pokemon.sp_atk}
-                                </ListGroup.Item>
-
-                                <ListGroup.Item> 
-                                    <Figure.Image width={16} height={16} alt="171x180"
-                                        src="https://cdn-icons-png.flaticon.com/512/1065/1065450.png"/>
-                                    <b> E. Defensa: </b> {pokemon.sp_def} 
-                                </ListGroup.Item>
-                               
-                                <ListGroup.Item> 
-                                <Figure.Image width={16} height={16} alt="171x180"
-                                        src=" https://cdn-icons-png.flaticon.com/512/1455/1455318.png"/>
-                                    <b> Velocidad: </b> {pokemon.speed}
-                                </ListGroup.Item>
-                            </ListGroup>
-                        <Button variant="primary">Ver información</Button>
-                        </Card.Body>
-                    </Card>
-                ))}
-               
+                <div className={styles.buttonWrapper}>
+                  <button
+                    onClick={() => {
+                      setIsOpen(true);
+                      setSelectedPokemon({...pokemon}); //Destructurado
+                    }}
+                    type="button"
+                    className={styles.btn}
+                    >
+                    Ver más
+                  </button>
                 </div>
+              </div>
             </div>
+          ))}
         </div>
-      
-    </>
-  )
-}
+      </div>
 
+      <PokemonDetailsModal 
+        isOpen={isOpen} 
+        pokemon={selectedPokemon} 
+        onClose={() => {
+          setIsOpen(false);
+          }} />  
+ 
+
+    </>
+  );
+};
 
 export default Listado;
